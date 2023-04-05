@@ -6,6 +6,8 @@ import {mockData} from '../data';
 
 const EditableContext = React.createContext(null);
 
+//specifying which cells to be edited
+
 const EditableCell = ({
   editing,
   dataIndex,
@@ -42,7 +44,7 @@ const EditableCell = ({
 };
 
 
-//-----------------------------------------------------------------------------------------------------
+//------------   Adding new entry to collection ---------------------------------
 const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
   console.log("form"+form)
@@ -224,7 +226,7 @@ const Home = () => {
       ),
   });
 
-  //========================================================================
+  //===================   Actions after edit buuton clicked===============================
 
   const handleDelete = (key) => {
     console.log(key);
@@ -248,8 +250,8 @@ const Home = () => {
   const cancel = () => {
     setEditingKey('');
   };
-
-  const save = async (key) => {
+    // saving edited entry and validating
+  const save = async (key) => {       
     try {
       const row = await form.validateFields();
       const newData = [...data];
@@ -267,12 +269,12 @@ const Home = () => {
         setData(newData);
         setEditingKey('');
       }
-    } catch (errInfo) {
+    } catch (errInfo) {             //validation
       console.log('Validate Failed:', errInfo);
     }
   };
   //----------------------------------------------------------------------------
-
+ // getting values after submiting new entry
   const onCreate = (values) => {   
     values["timestampCreated"]=new Date().toLocaleString();    
     console.log('Received values of form: ', values);
@@ -285,6 +287,7 @@ const Home = () => {
   },[]);
   
   //************************************************************************************************** */
+  // UI of columns and their prpperties
   const columns = [
     {
       title: 'Timestamp Created',
@@ -390,8 +393,6 @@ const Home = () => {
     },
   ];
   //****************************************************************************************************** */
-
-  
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -413,17 +414,17 @@ const Home = () => {
     <div style={{ backgroundColor:'lightsalmon',
         border:"5px solid brown", borderRadius:"20px", margin:"10px 10px"}}>
 
-          <h3> To-do List</h3>
+        <h3> To-do List</h3>
        
         <Button
-        style={{margin:"10px 20px"}}
-        type="primary"
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        New Collection
-      </Button>
+          style={{margin:"10px 20px"}}
+          type="primary"
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          New Collection
+        </Button>
 
       <Form form={form} component={false}>
         <Table 
@@ -437,11 +438,9 @@ const Home = () => {
           dataSource={data}
           columns={mergedColumns}
           rowClassName="editable-row"
-          onChange={onChange}
-         
-          
+          onChange={onChange}        
         />
-    </Form>
+      </Form>
 
       <CollectionCreateForm
         open={open}
@@ -450,7 +449,6 @@ const Home = () => {
           setOpen(false);
         }}
       />
-        {/* <Table columns={columns} dataSource={data} />; */}
     </div>
  ) 
 }
